@@ -1,0 +1,46 @@
+sz=re.findall(r'[\u4e00-\u9fa5]+数字[\u4e00-\u9fa5]+',szwb)
+#关键词利用正则表达式之后以句子为单位存储在列表list中
+keywords=[]
+for h in range(len(sz)):
+    tags = list(ps.cut(sz[h]))
+    #print(tags)
+    numOfsz=0
+    for i in range(len(tags)):
+        if tags[i].word=='数字':
+            numOfsz=i
+            keyword='数字'
+        elif tags[i].word=='数字化':
+            numOfsz=i
+            keyword='数字化'
+        elif tags[i].flag=='x':
+            keyword=tags[i].word
+    try:
+        j=numOfsz
+        count=1
+        while(tags[j-count].flag=='n' and j-count>=0):
+            #print('j-'+str(count)+':'+tags[j-count].word)
+            keyword=tags[j-count].word+keyword
+            count=count+1
+        #print(keyword)
+    except Exception as e:
+        print('到头了')
+    try:
+        j=numOfsz
+        count=1
+        while(tags[j+count].flag=='n'):
+            #print('j+'+str(count)+':'+tags[j+count].word)
+            keyword=keyword+tags[j+count].word
+            count=count+1
+        #print(keyword)
+    except Exception as e:
+        pass
+        #print('到头了')  
+    #print(keyword)
+    if len(keyword)>1:
+        keywords.append(keyword)
+
+c=pd.Series(keywords).value_counts()
+cdf=[]
+for i in range(len(c)):
+    print((c.index[i],c.values[i]))
+    cdf.append((c.index[i],c.values[i]))
